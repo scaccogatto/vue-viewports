@@ -37,6 +37,7 @@ Vue.use(VueViewports, {
     // more than mobile
   }
 }
+```
 
 ## API
 
