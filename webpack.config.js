@@ -5,7 +5,9 @@ const config = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'vue-viewports.js'
+    filename: 'vue-viewports.js',
+    library: 'VueViewports',
+    libraryTarget: 'umd'
   },
   module: {
     rules: [

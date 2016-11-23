@@ -1,5 +1,5 @@
-export default class VueViewports {
-  static install (Vue, options = { 320: 'mobile', 1024: 'tablet', 1920: 'desktop' }) {
+const VueViewports = {
+  install (Vue, options = { 320: 'mobile', 1024: 'tablet', 1920: 'desktop' }) {
     // setup event name
     let updateEventName = 'VueViewports$updateCurrentViewport'
     Vue.prototype.$viewportsUpdateEventName = updateEventName
@@ -12,13 +12,11 @@ export default class VueViewports {
 
     // listen for update
     window.addEventListener('VueViewports$updateCurrentViewport', VueViewports._updateCurrentViewport.bind(undefined, Vue, options))
-  }
-
-  static _updateCurrentViewport (Vue, options) {
+  },
+  _updateCurrentViewport (Vue, options) {
     Vue.prototype.$currentViewport = VueViewports._getCurrentViewport(options)
-  }
-
-  static _getCurrentViewport (options) {
+  },
+  _getCurrentViewport (options) {
     // array-like keys, sorted
     let arrayOptions = Object.keys(options).sort((a, b) => { return a - b })
 
@@ -29,9 +27,8 @@ export default class VueViewports {
     let compatibleValue = arrayOptions.find((value) => { return value >= windowWidth })
 
     return options[compatibleValue]
-  }
-
-  static _throttle (type, name, obj) { // TODO: move this in another plugin
+  },
+  _throttle (type, name, obj) { // TODO: move this in another plugin
     // define the main context, if not defined go fo 'window' top context
     obj = obj || window
 
@@ -48,4 +45,11 @@ export default class VueViewports {
 
     obj.addEventListener(type, func)
   }
+}
+
+export default VueViewports
+
+// in-browser load
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(VueViewports)
 }

@@ -1,6 +1,6 @@
 {
   "name": "vue-viewports",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "description": "define your custom viewports and use them in your components",
   "author": {
     "name": "Marco Boffo",
