@@ -1,14 +1,17 @@
 const webpack = require('webpack');
+const path    = require('path');
 
 const config = {
   entry: './src/index.js',
   output: {
-    filename: './dist/bundle.js'
+    path: path.resolve(__dirname, './dist'),
+    filename: 'vue-viewports.js'
   },
   module: {
     rules: [
       {
         test: /\.js$/,
+        include: path.resolve(__dirname, './src'),
         exclude: /node_modules/,
         use: "babel-loader"
       }
