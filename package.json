@@ -1,6 +1,6 @@
 {
   "name": "vue-viewports",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "define your custom viewports and use them in your components",
   "author": {
     "name": "Marco Boffo",
@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/scaccogatto/vue-viewports.git"
   },
-  "main": "src/index.js",
+  "main": "dist/vue-viewports.js",
   "license": "MIT",
   "scripts": {
     "start": "webpack --config webpack.config.js"
