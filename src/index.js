@@ -1,7 +1,7 @@
 import VueThrottleEvent from 'vue-throttle-event'
 
 const VueViewports = {
-  install (Vue, options = { 420: 'mobile', 768: 'tablet', 1024: 'desktop' }) {
+  install (Vue, options = { 420: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd-desktop', 2560: 'qhd-desktop', 3840: 'uhd-desktop' }) {
     // setup event name
     let updateEventName = 'VueViewports$updateCurrentViewport'
     Vue.prototype.$viewportsUpdateEventName = updateEventName
@@ -28,7 +28,11 @@ const VueViewports = {
     // get compatible value
     let compatibleValue = arrayOptions.find((value) => { return value >= windowWidth })
 
-    return options[compatibleValue]
+    return {
+      label: options[compatibleValue],
+      value: compatibleValue,
+      _windowWidth: windowWidth
+    }
   }
 }
 
