@@ -20,9 +20,9 @@ $ npm install vue-viewports --save-dev
 import VueViewports from 'vue-viewports'
 
 Vue.use(VueViewports, {
-  320: 'mobile',
-  1024: 'tablet',
-  1920: 'desktop'
+  420: 'mobile',
+  768: 'tablet',
+  1024: 'desktop'
 })
 ```
 ### Arguments
