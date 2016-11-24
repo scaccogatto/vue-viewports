@@ -1,5 +1,7 @@
+import VueThrottleEvent from 'vue-throttle-event'
+
 const VueViewports = {
-  install (Vue, options = { 320: 'mobile', 1024: 'tablet', 1920: 'desktop' }) {
+  install (Vue, options = { 420: 'mobile', 768: 'tablet', 1024: 'desktop' }) {
     // setup event name
     let updateEventName = 'VueViewports$updateCurrentViewport'
     Vue.prototype.$viewportsUpdateEventName = updateEventName
@@ -8,7 +10,7 @@ const VueViewports = {
     VueViewports._updateCurrentViewport.call(undefined, Vue, options)
 
     // setup a global event listener
-    VueViewports._throttle('resize', updateEventName, window)
+    VueThrottleEvent._throttle('resize', updateEventName, window)
 
     // listen for update
     window.addEventListener('VueViewports$updateCurrentViewport', VueViewports._updateCurrentViewport.bind(undefined, Vue, options))
@@ -27,23 +29,6 @@ const VueViewports = {
     let compatibleValue = arrayOptions.find((value) => { return value >= windowWidth })
 
     return options[compatibleValue]
-  },
-  _throttle (type, name, obj) { // TODO: move this in another plugin
-    // define the main context, if not defined go fo 'window' top context
-    obj = obj || window
-
-    let running = false
-    let func = () => {
-      if (running) return
-
-      running = true
-      requestAnimationFrame(() => {
-        obj.dispatchEvent(new CustomEvent(name))
-        running = false
-      })
-    }
-
-    obj.addEventListener(type, func)
   }
 }
 
