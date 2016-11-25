@@ -20,19 +20,22 @@ const VueViewports = {
   },
   _getCurrentViewport (options) {
     // array-like keys, sorted
-    let arrayOptions = Object.keys(options).sort((a, b) => { return a - b })
+    let arrayOptions = VueViewports._sortOptions(options)
 
     // get window width
     let windowWidth = window.innerWidth
 
-    // get compatible value
-    let compatibleValue = arrayOptions.find((value) => { return value >= windowWidth })
+    // get compatible value 1024
+    let compatibleValue = arrayOptions.reverse().find(value => { return windowWidth >= value })
 
     return {
       label: options[compatibleValue],
       value: compatibleValue,
       _windowWidth: windowWidth
     }
+  },
+  _sortOptions (options) {
+    return Object.keys(options).map(Number).sort((a, b) => { return a - b })
   }
 }
 
