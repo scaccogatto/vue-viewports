@@ -44,3 +44,12 @@ Vue.use(VueViewports, { 420: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd
 ## Variables
 - `$currentViewport`: the current viewport object, defined by `label`, `value` and a private `_windowWidth` for testing purposes
 - `$viewportsUpdateEventName`: the event name, called on window (you can catch it if needed)
+
+## Testing
+- This software uses [mocha](https://mochajs.org/) as testing framework
+- Clone this repository
+- `cd vue-viewports`
+- `npm install`
+- `npm test`
+
+*Feel free to contribute and ask questions*
