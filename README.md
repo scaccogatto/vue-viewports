@@ -2,6 +2,10 @@
 
 > define your custom viewports and use them in your components
 
+## Status
+
+[![Build Status](https://travis-ci.org/scaccogatto/vue-viewports.svg?branch=master)](https://travis-ci.org/scaccogatto/vue-viewports)
+
 ## Features
 
 - Uses [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)
