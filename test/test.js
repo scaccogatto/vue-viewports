@@ -87,7 +87,7 @@ describe('VueViewports', () => {
   })
 
   describe('install', () => {
-    it ('should set the name event correctly', () => {
+    it ('should set the event\'s name correctly', () => {
       VueViewports.install(Vue, defaults)
       assert.equal(Vue.prototype.$viewportsUpdateEventName, 'VueViewports$updateCurrentViewport')
     })
