@@ -21,48 +21,48 @@ describe('VueViewports', () => {
   })
 
   describe('variables', () => {
-    it ('Vue should be an Object', () => {
+    it('Vue should be an Object', () => {
       assert.strictEqual(typeof Vue, 'object')
     })
 
-    it ('Vue.prototype should be an Object', () => {
+    it('Vue.prototype should be an Object', () => {
       assert.strictEqual(typeof Vue.prototype, 'object')
     })
 
-    it ('window should be an Object', () => {
+    it('window should be an Object', () => {
       assert.strictEqual(typeof window, 'object')
     })
 
-    it ('window.innerWidth should be an Integer', () => {
+    it('window.innerWidth should be an Integer', () => {
       assert.ok(Number.isInteger(window.innerWidth))
     })
   })
 
   describe('_sortOptions', () => {
-    it ('should have the same lenght between input and output', () => {
+    it('should have the same lenght between input and output', () => {
       assert.equal(Object.keys(defaults).lenght, VueViewports._sortOptions(defaults).lenght)
     })
 
-    it ('should sort numeric keys on a Object', () => {
+    it('should sort numeric keys on a Object', () => {
       assert.ok(arrayEquals(Object.keys(defaults).map(Number), VueViewports._sortOptions(shuffled)))
     })
   })
 
   describe('_getCurrentViewport', () => {
-    it ('should output a valid Object', () => {
+    it('should output a valid Object', () => {
       assert.strictEqual(typeof VueViewports._getCurrentViewport(defaults), 'object')
     })
 
-    it ('should respect the doc labels', () => {
+    it('should respect the doc labels', () => {
       assert.ok(arrayEquals(Object.keys(VueViewports._getCurrentViewport(defaults)), ['label', 'value', '_windowWidth']))
     })
 
-    it ('should return a matching label with the value', () => {
+    it('should return a matching label with the value', () => {
       let currentViewport = VueViewports._getCurrentViewport(defaults)
       assert.equal(currentViewport.label, defaults[currentViewport.value])
     })
 
-    it ('should return the mathing labels when the viewports are on the edge', () => {
+    it('should return the mathing labels when the viewports are on the edge', () => {
       let test = () => {
         let iterable = new Map(Object.entries(defaults))
         for (let [key, value] of iterable) {
@@ -78,7 +78,7 @@ describe('VueViewports', () => {
   })
 
   describe('_updateCurrentViewport', () => {
-    it ('should update Vue.prototype.$currentViewport', () => {
+    it('should update Vue.prototype.$currentViewport', () => {
       let currentValue = Vue.prototype.$currentViewport
       VueViewports._updateCurrentViewport(Vue, defaults)
 
@@ -87,12 +87,12 @@ describe('VueViewports', () => {
   })
 
   describe('install', () => {
-    it ('should set the event\'s name correctly', () => {
+    it('should set the event\'s name correctly', () => {
       VueViewports.install(Vue, defaults)
       assert.equal(Vue.prototype.$viewportsUpdateEventName, 'VueViewports$updateCurrentViewport')
     })
 
-    it ('should fire _updateCurrentViewport when event is fired', () => {
+    it('should fire _updateCurrentViewport when event is fired', () => {
       VueViewports.install(Vue, defaults)
       window.dispatchEvent(new window.CustomEvent(Vue.prototype.$viewportsUpdateEventName))
       assert.notStrictEqual(typeof Vue.prototype.$currentViewport, 'undefined')
