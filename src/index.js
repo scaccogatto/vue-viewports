@@ -13,7 +13,7 @@ const VueViewports = {
     VueThrottleEvent._throttle('resize', updateEventName, window)
 
     // listen for update
-    window.addEventListener('VueViewports$updateCurrentViewport', VueViewports._updateCurrentViewport.bind(undefined, Vue, options))
+    window.addEventListener(updateEventName, VueViewports._updateCurrentViewport.bind(undefined, Vue, options))
   },
   _updateCurrentViewport (Vue, options) {
     Vue.prototype.$currentViewport = VueViewports._getCurrentViewport(options)
