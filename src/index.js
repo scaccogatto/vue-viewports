@@ -1,3 +1,4 @@
+import 'core-js/fn/array/find'
 import VueThrottleEvent from 'vue-throttle-event'
 
 const VueViewports = {
