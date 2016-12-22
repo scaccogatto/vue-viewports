@@ -2,7 +2,7 @@ import 'core-js/fn/array/find'
 import VueThrottleEvent from 'vue-throttle-event'
 
 const VueViewports = {
-  install (Vue, options = { 420: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd-desktop', 2560: 'qhd-desktop', 3840: 'uhd-desktop' }) {
+  install (Vue, options = { 0: 'sub-mobile', 320: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd-desktop', 2560: 'qhd-desktop', 3840: 'uhd-desktop' }) {
     // setup event name
     let updateEventName = 'VueViewports$updateCurrentViewport'
     Vue.prototype.$viewportsUpdateEventName = updateEventName
