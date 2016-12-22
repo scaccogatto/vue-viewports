@@ -26,7 +26,7 @@ import VueViewports from 'vue-viewports'
 Vue.use(VueViewports, { 420: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd-desktop', 2560: 'qhd-desktop', 3840: 'uhd-desktop' })
 ```
 ### Arguments
-- options [optional]: object defining a set of `{ key: value }` where 'key' is the number value (px) where the viewport ends and the 'value' is the viewport's name, defaults on previous example
+- options [optional]: object defining a set of `{ key: value }` where 'key' is the number value (px) where the viewport ends and the 'value' is the viewport's name, **defaults** on previous example
 
 ## Example
 ```js
