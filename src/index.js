@@ -24,7 +24,7 @@ const VueViewports = {
     let arrayOptions = VueViewports._sortOptions(options)
 
     // get window width
-    let windowWidth = window.innerWidth
+    let windowWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
 
     // get compatible value 1024
     let compatibleValue = arrayOptions.reverse().find(value => { return windowWidth >= value })
