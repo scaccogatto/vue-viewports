@@ -35,5 +35,3 @@ export default VueViewports
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(VueViewports)
 }
-
-VueViewports.install()
