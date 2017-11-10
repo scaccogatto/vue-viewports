@@ -1,3 +1,4 @@
+import 'core-js/fn/array/find'
 import { store } from './store'
 
 const toMatchMedia = size => window.matchMedia(toMediaQuery(size.rule))
