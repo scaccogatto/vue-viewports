@@ -1,10 +1,10 @@
 {
   "name": "vue-viewports",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "define your custom viewports and use them in your components",
   "author": {
     "name": "Marco Boffo",
-    "email": "<marcoboffo.waves@gmail.com>"
+    "email": "marcoboffo.waves@gmail.com"
   },
   "repository": {
     "type": "git",
@@ -13,23 +13,23 @@
   "main": "dist/vue-viewports.js",
   "license": "MIT",
   "scripts": {
-    "start": "webpack --config webpack.config.js",
-    "test": "mocha"
+    "build": "webpack --config webpack.config.js",
+    "lint": "eslint src/**"
   },
   "dependencies": {
-    "vue": "^2.0.1"
+    "vue": "^2.5.3"
   },
   "devDependencies": {
-    "array-equal": "^1.0.0",
-    "babel-core": "^6.18.2",
-    "babel-loader": "^6.2.8",
-    "babel-polyfill": "^6.20.0",
-    "babel-preset-latest": "^6.16.0",
-    "jsdom": "^9.8.3",
-    "knuth-shuffle": "^1.0.1",
-    "mocha": "^3.1.2",
-    "mocha-jsdom": "^1.1.0",
-    "vue-throttle-event": "^1.4.0",
-    "webpack": "^2.1.0-beta.27"
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "eslint": "^4.10.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "webpack": "^3.8.1"
   }
 }

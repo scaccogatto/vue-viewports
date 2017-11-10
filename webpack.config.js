@@ -1,10 +1,10 @@
 const webpack = require('webpack');
-const path    = require('path');
+const path = require('path');
 
 const config = {
-  entry: './src/index.js',
+  entry: path.resolve(__dirname, 'src', 'index.js'),
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'vue-viewports.js',
     library: 'VueViewports',
     libraryTarget: 'umd'
@@ -13,7 +13,7 @@ const config = {
     rules: [
       {
         test: /\.js$/,
-        include: path.resolve(__dirname, './src'),
+        include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
         use: "babel-loader"
       }

@@ -2,55 +2,72 @@
 
 > define your custom viewports and use them in your components
 
-## Status
-
-[![Build Status](https://travis-ci.org/scaccogatto/vue-viewports.svg?branch=master)](https://travis-ci.org/scaccogatto/vue-viewports)
-
 ## Features
 
-- Uses [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame)
+- Uses [matchMedia](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia)
 - Exposes a fully updated viewport name
-- Exposes the event name fired by requestAnimationFrame
 
 ## Installation
 
 ### npm
-```
-$ npm install vue-viewports --save-dev
+
+```shell
+npm install vue-viewports --save-dev
 ```
 
 ### Vue's main.js
+
 ```js
 import VueViewports from 'vue-viewports'
 
-Vue.use(VueViewports, { 0: 'sub-mobile', 420: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd-desktop', 2560: 'qhd-desktop', 3840: 'uhd-desktop' })
+const options = [
+  {
+    rule: '320px',
+    label: 'mobile'
+  },
+  {
+    rule: '768px',
+    label: 'tablet'
+  },
+  {
+    rule: '1024px',
+    label: 'desktop'
+  },
+  {
+    rule: '1920px',
+    label: 'hd-desktop'
+  },
+  {
+    rule: '2560px',
+    label: 'qhd-desktop'
+  },
+  {
+    rule: '3840px',
+    label: 'uhd-desktop'
+  }
+]
+
+Vue.use(VueViewports, options)
 ```
+
 ### Arguments
-- options [optional]: object defining a set of `{ key: value }` where 'key' is the number value (px) where the viewport starts (included) and the 'value' is the viewport's name, **defaults** on previous example
+
+- options [optional]: object defining a set of `{ rule: value, label: value }` where 'rule' is the number value where the viewport starts (included) and the 'label' is the viewport's name, **defaults** on previous example
 
 ## Example
+
 ```js
 {
-  if (this.$currentViewport.label === 'mobile') {
-    // mobile viewport
+  if (this.$currentViewport.label === 'tablet') {
+    // from 768px (included) to 1024px (excluded)
   } else {
-    // more than mobile
+    // anything else
   }
 }
 ```
 
-## API
-
 ## Variables
-- `$currentViewport`: the current viewport object, defined by `label`, `value` and a private `_windowWidth` for testing purposes
-- `$viewportsUpdateEventName`: the event name, called on window (you can catch it if needed)
 
-## Testing
-This software uses [mocha](https://mochajs.org/) as testing framework
+- `$currentViewport`: the current viewport object, defined by `rule`, `label`; `undefined` if no match.
 
-- Clone this repository
-- `cd vue-viewports`
-- `npm install`
-- `npm test`
-
-*Feel free to contribute and ask questions*
+> Feel free to contribute and ask questions!
