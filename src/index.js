@@ -1,42 +1,31 @@
-import 'core-js/fn/array/find'
-import VueThrottleEvent from 'vue-throttle-event'
+import { store, defaultOptions } from './store'
+import { toMatchMedia, updateMatchStatus } from './matchMedia'
 
 const VueViewports = {
-  install (Vue, options = { 0: 'sub-mobile', 320: 'mobile', 768: 'tablet', 1024: 'desktop', 1920: 'hd-desktop', 2560: 'qhd-desktop', 3840: 'uhd-desktop' }) {
-    // setup event name
-    let updateEventName = 'VueViewports$updateCurrentViewport'
-    Vue.prototype.$viewportsUpdateEventName = updateEventName
+  install (Vue, options = defaultOptions) {
+    // save sizes
+    store.sizes = options
 
-    // setup a global variable
-    VueViewports._updateCurrentViewport.call(undefined, Vue, options)
+    // create matchMediaObjects https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia
+    const matchMedia = store.sizes.map(toMatchMedia)
 
-    // setup a global event listener
-    VueThrottleEvent._throttle('resize', updateEventName, window)
+    // save it
+    store.matchMedia = matchMedia
 
-    // listen for update
-    window.addEventListener(updateEventName, VueViewports._updateCurrentViewport.bind(undefined, Vue, options))
+    // add listeners
+    store.matchMedia.forEach(matchMediaObj => matchMediaObj.addEventListener('change', updateMatchStatus))
+
+    // first trigger
+    store.matchMedia.forEach(matchMediaObj => {
+      const { media, matches } = matchMediaObj
+      matchMediaObj.dispatchEvent(new window.MediaQueryListEvent('change', { media, matches }))
+    })
+
+    // global call
+    Vue.prototype.$currentViewport = VueViewports.currentViewport
   },
-  _updateCurrentViewport (Vue, options) {
-    Vue.prototype.$currentViewport = VueViewports._getCurrentViewport(options)
-  },
-  _getCurrentViewport (options) {
-    // array-like keys, sorted
-    let arrayOptions = VueViewports._sortOptions(options)
-
-    // get window width
-    let windowWidth = window.innerWidth
-
-    // get compatible value 1024
-    let compatibleValue = arrayOptions.reverse().find(value => { return windowWidth >= value })
-
-    return {
-      label: options[compatibleValue],
-      value: compatibleValue,
-      _windowWidth: windowWidth
-    }
-  },
-  _sortOptions (options) {
-    return Object.keys(options).map(Number).sort((a, b) => { return a - b })
+  get currentViewport () {
+    return store.currentMatch
   }
 }
 
@@ -46,3 +35,5 @@ export default VueViewports
 if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(VueViewports)
 }
+
+VueViewports.install()
