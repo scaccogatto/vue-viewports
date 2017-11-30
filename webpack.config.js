@@ -1,5 +1,5 @@
-const webpack = require('webpack');
-const path = require('path');
+const webpack = require('webpack')
+const path = require('path')
 
 const config = {
   entry: path.resolve(__dirname, 'src', 'index.js'),
@@ -15,7 +15,7 @@ const config = {
         test: /\.js$/,
         include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-        use: "babel-loader"
+        use: 'babel-loader'
       }
     ]
   },
@@ -24,4 +24,4 @@ const config = {
   ]
 }
 
-module.exports = config;
+module.exports = config

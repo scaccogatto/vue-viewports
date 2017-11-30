@@ -1,15 +1,16 @@
 import 'core-js/fn/array/find'
+import 'core-js/fn/string/includes'
 import { store } from './store'
 
 const toMatchMedia = size => window.matchMedia(toMediaQuery(size.rule))
 
 const toMediaQuery = rule => `(min-width: ${rule})`
 
-const updateMatchStatus = e => {
+const updateMatchStatus = ({ media, matches }) => {
   // find the store rule, matching the event
-  const rule = store.sizes.find(size => e.media.includes(size.rule)).rule
+  const rule = store.sizes.find(size => media.includes(size.rule)).rule
 
-  if (e.matches) {
+  if (matches) {
     // if it matches, just set the rule
     store.currentMatch = store.sizes.find(size => size.rule === rule)
   } else {

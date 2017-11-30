@@ -13,19 +13,32 @@ const VueViewports = {
     store.matchMedia = matchMedia
 
     // add listeners
-    store.matchMedia.forEach(matchMediaObj => matchMediaObj.addEventListener('change', updateMatchStatus))
+    store.matchMedia.forEach(matchMediaObj => matchMediaObj.addListener(updateMatchStatus))
 
     // first trigger
-    store.matchMedia.forEach(matchMediaObj => {
-      const { media, matches } = matchMediaObj
-      matchMediaObj.dispatchEvent(new window.MediaQueryListEvent('change', { media, matches }))
-    })
+    store.matchMedia.forEach(updateMatchStatus)
 
     // global call
-    Vue.prototype.$currentViewport = VueViewports.currentViewport
+    window.Object.defineProperty(Vue.prototype, '$currentViewport', {
+      get: () => VueViewports._getPublicObject()
+    })
   },
   get currentViewport () {
     return store.currentMatch
+  },
+  _getPublicObject () {
+    const { currentViewport } = VueViewports
+    if (typeof currentViewport !== 'undefined') {
+      const { rule, label } = VueViewports.currentViewport
+      return {
+        get rule () {
+          return rule
+        },
+        get label () {
+          return label
+        }
+      }
+    }
   }
 }
 
