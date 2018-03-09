@@ -13,7 +13,7 @@
   "main": "dist/vue-viewports.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack -p --config webpack.config.js",
+    "start": "webpack -p --config webpack.config.js",
     "lint": "eslint src/**"
   },
   "dependencies": {
