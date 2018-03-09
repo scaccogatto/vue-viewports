@@ -1,3 +1,24 @@
 language: node_js
+
 node_js:
-  - "node"
+  - lts/carbon
+
+install:
+  - npm install
+
+script:
+  - npm run start
+
+cache:
+  directories:
+  - node_modules
+
+deploy:
+  provider: npm
+  email: marcoboffo.waves@gmail.com
+  skip_cleanup: true
+  api_key:
+    secure: Mdocmq0umksVtmbl+D2wyZAHKTbAn0BAdqUJGcSDL8RHY2CMlreIBiZT3V9frdZLiV7JgDojjz3TF8tsTeeLybPqnVjHpOsBvHlcUts0Y0gbr2tkVLSz866gnazOiSZWuL52H5psUqx0wNuNTKhwsOAQS3lz+8S6t71lPcteTa8PyQldrkqYhacGsMNK3/T/jBOEr094QqvKQ7V1XA5UBrFV7BJgHryn1Tg+GudD74uCfilGmTGW98SWnJL8WCoLspd71K/KUnvUa17Sxg9ormYemys55d87fBjsdw6OScAPnlKL92bEpPdW0hlQ8cdxqQXUpWNq1CkQmQqw30o8MzcCEfG+vZdrqrNICimNUwAaQKn7hXw/fmomA1iecHalYG+BUDT++WYht+xrBU3ZpvGMmVmOZIv8Gf3QaDJlUox3/Biw2hG5ed7dlvMxBIXZMgBAd9XJBnrtFLoy+t+IXXnGsbYTRivqfo5IwUkdZHx66iqptEzza5+VZC7nZqfg8Z1DQPFwXJfH9BfFGg8dQpEAJRMxJExn0nHO3uoWbqj3Nk7lqLGeJbJDM9AoXhmW0CSX1yX51tVkIkhvIjBQmHODs/m01NCx5WU2Dz3S13rXq+z87Esm/EIpaCCKNCA7D6CtQIIQdP2zQla/qUay4oRXK3w2lQeFKkG+xOh0cjA=
+  on:
+    tags: true
+    repo: scaccogatto/vue-viewports
