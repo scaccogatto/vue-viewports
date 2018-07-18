@@ -12,7 +12,7 @@
 ### npm
 
 ```shell
-npm install vue-viewports --save-dev
+npm install vue-viewports --save
 ```
 
 ### Vue's main.js
