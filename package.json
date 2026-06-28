@@ -1,35 +1,79 @@
 {
   "name": "vue-viewports",
-  "version": "3.1.2",
-  "description": "define your custom viewports and use them in your components",
+  "version": "4.0.0",
+  "description": "Named, reactive, matchMedia-based viewport breakpoints for Vue 3 — a tiny plugin and composable.",
+  "type": "module",
   "author": {
     "name": "Marco Boffo",
     "email": "marcoboffo.waves@gmail.com"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scaccogatto/vue-viewports.git"
+    "url": "git+https://github.com/scaccogatto/vue-viewports.git"
   },
-  "main": "dist/vue-viewports.js",
-  "license": "MIT",
+  "homepage": "https://github.com/scaccogatto/vue-viewports#readme",
+  "bugs": {
+    "url": "https://github.com/scaccogatto/vue-viewports/issues"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "viewport",
+    "viewports",
+    "responsive",
+    "breakpoints",
+    "media-query",
+    "matchmedia",
+    "composable",
+    "plugin"
+  ],
+  "sideEffects": false,
+  "main": "./dist/vue-viewports.cjs",
+  "module": "./dist/vue-viewports.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/vue-viewports.umd.cjs",
+  "jsdelivr": "./dist/vue-viewports.umd.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/vue-viewports.js",
+      "require": "./dist/vue-viewports.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "webpack -p --config webpack.config.js",
-    "lint": "eslint src/**"
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run build"
   },
-  "dependencies": {
-    "vue": "^2.5.9"
+  "peerDependencies": {
+    "vue": "^3.3.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "eslint": "^4.12.1",
-    "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "webpack": "^3.8.1"
+    "@eslint/js": "^10.0.1",
+    "@microsoft/api-extractor": "^7.52.16",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitest/coverage-v8": "^4.1.9",
+    "@vue/test-utils": "^2.4.11",
+    "eslint": "^10.6.0",
+    "jsdom": "^29.1.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0",
+    "vite": "^8.1.0",
+    "vite-plugin-dts": "^5.0.3",
+    "vitest": "^4.1.9",
+    "vue": "^3.5.39"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
