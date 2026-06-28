@@ -13,7 +13,7 @@ Define your breakpoints once, get the **current viewport** reactively in every c
 - **Two APIs** — a Vue plugin (`$currentViewport` on every component) and a `useViewport()` composable.
 - **Typed** — ships first-class TypeScript types and a single bundled `.d.ts`.
 - **Tiny & zero-dependency** — < 1 kB gzipped, `vue` is the only (peer) dependency.
-- **ESM + CJS + UMD** — works with Vite, bundlers, and `<script>` CDN usage.
+- **ESM + CJS** — works with Vite and bundlers.
 
 ## Installation
 
