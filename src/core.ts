@@ -54,11 +54,12 @@ export const setupViewports = (viewports: ViewportConfigList = defaultViewports)
   update()
 
   initialized = true
-  teardown = (): void => {
+  const dispose = (): void => {
     queries.forEach((query) => query.removeEventListener('change', update))
-    teardown = undefined
+    if (teardown === dispose) teardown = undefined
   }
-  return teardown
+  teardown = dispose
+  return dispose
 }
 
 /**

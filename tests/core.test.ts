@@ -80,9 +80,14 @@ describe('setupViewports', () => {
     media.setWidth(700)
     expect(current.value?.label).toBe('small')
 
-    teardown() // teardown from the first setup must be a no-op now
+    teardown() // stale teardown from the first setup must not affect active state
     media.setWidth(620)
     expect(current.value?.label).toBe('small')
+
+    // the active setup is still disposable after a stale teardown call
+    resetViewports()
+    media.setWidth(700)
+    expect(current.value).toBeUndefined()
   })
 
   it('returns a teardown that stops further updates', () => {

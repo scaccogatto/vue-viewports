@@ -127,7 +127,7 @@ type ViewportConfigList = readonly ViewportConfig[]
 | `qhd-desktop` | `2560px` |
 | `uhd-desktop` | `3840px` |
 
-## Migrating from v1 (Vue 2)
+## Migrating from v3 (Vue 2)
 
 `v4` is a full Vue 3 + TypeScript rewrite. The old `v3.x` line (Vue 2) remains installable for legacy projects: `npm install vue-viewports@3`.
 
