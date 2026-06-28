@@ -1,6 +1,6 @@
 {
   "name": "vue-viewports",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Named, reactive, matchMedia-based viewport breakpoints for Vue 3 — a tiny plugin and composable.",
   "type": "module",
   "author": {
@@ -26,7 +26,10 @@
     "media-query",
     "matchmedia",
     "composable",
-    "plugin"
+    "plugin",
+    "composition-api",
+    "typescript",
+    "vite"
   ],
   "sideEffects": false,
   "main": "./dist/vue-viewports.cjs",
