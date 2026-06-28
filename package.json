@@ -32,8 +32,6 @@
   "main": "./dist/vue-viewports.cjs",
   "module": "./dist/vue-viewports.js",
   "types": "./dist/index.d.ts",
-  "unpkg": "./dist/vue-viewports.umd.cjs",
-  "jsdelivr": "./dist/vue-viewports.umd.cjs",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -60,8 +58,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@microsoft/api-extractor": "^7.52.16",
-    "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/coverage-v8": "^4.1.9",
     "@vue/test-utils": "^2.4.11",
     "eslint": "^10.6.0",
