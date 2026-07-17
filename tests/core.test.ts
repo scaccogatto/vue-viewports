@@ -21,8 +21,93 @@ afterEach(() => {
 })
 
 describe('toMediaQuery', () => {
-  it('builds a min-width media query from a rule', () => {
+  it('builds a min-width media query from a legacy numeric rule', () => {
     expect(toMediaQuery('768px')).toBe('(min-width: 768px)')
+  })
+
+  it('passes a raw media-query string through verbatim', () => {
+    expect(toMediaQuery('(orientation: landscape)')).toBe('(orientation: landscape)')
+  })
+
+  it('compiles a range rule with min only', () => {
+    expect(toMediaQuery({ min: 600 })).toBe('(min-width: 600px)')
+  })
+
+  it('compiles a range rule with max only', () => {
+    expect(toMediaQuery({ max: 900 })).toBe('(max-width: 900px)')
+  })
+
+  it('compiles a range rule with orientation only', () => {
+    expect(toMediaQuery({ orientation: 'portrait' })).toBe('(orientation: portrait)')
+  })
+
+  it('compiles a range rule combining min, max and orientation', () => {
+    expect(toMediaQuery({ min: 600, max: 900, orientation: 'landscape' })).toBe(
+      '(min-width: 600px) and (max-width: 900px) and (orientation: landscape)',
+    )
+  })
+
+  it('compiles an empty range rule to "all" (always matches)', () => {
+    expect(toMediaQuery({})).toBe('all')
+  })
+})
+
+describe('computeMatch — extended breakpoint forms', () => {
+  it('matches an object range rule (min/max)', () => {
+    const viewports = [{ rule: { min: 600, max: 900 }, label: 'mid' }]
+
+    media.setWidth(700)
+    expect(computeMatch(viewports)).toEqual({ rule: { min: 600, max: 900 }, label: 'mid' })
+
+    media.setWidth(1000)
+    expect(computeMatch(viewports)).toBeUndefined()
+  })
+
+  it('matches an orientation-only object rule', () => {
+    const viewports = [{ rule: { orientation: 'portrait' as const }, label: 'tall' }]
+
+    media.setOrientation('landscape')
+    expect(computeMatch(viewports)).toBeUndefined()
+
+    media.setOrientation('portrait')
+    expect(computeMatch(viewports)).toEqual({ rule: { orientation: 'portrait' }, label: 'tall' })
+  })
+
+  it('matches a raw media-query string rule, sorted below width-based rules', () => {
+    const viewports = [
+      { rule: '(orientation: landscape)', label: 'wide' },
+      { rule: '768px', label: 'tablet' },
+    ]
+
+    media.setWidth(400) // below 'tablet', so only the raw rule can match
+    media.setOrientation('portrait')
+    expect(computeMatch(viewports)).toBeUndefined()
+
+    media.setOrientation('landscape')
+    expect(computeMatch(viewports)).toEqual({ rule: '(orientation: landscape)', label: 'wide' })
+  })
+
+  it('prefers a matching width-based rule over a rule with no numeric width when both match', () => {
+    const viewports = [
+      { rule: { orientation: 'landscape' as const }, label: 'landscape-only' },
+      { rule: '768px', label: 'tablet' },
+    ]
+    media.setWidth(800)
+    media.setOrientation('landscape')
+    expect(computeMatch(viewports)).toEqual({ rule: '768px', label: 'tablet' })
+  })
+
+  it('falls back to a rule with no numeric width when it is the only match', () => {
+    const viewports = [
+      { rule: { orientation: 'landscape' as const }, label: 'landscape-only' },
+      { rule: '2000px', label: 'huge' },
+    ]
+    media.setWidth(400)
+    media.setOrientation('landscape')
+    expect(computeMatch(viewports)).toEqual({
+      rule: { orientation: 'landscape' },
+      label: 'landscape-only',
+    })
   })
 })
 

@@ -12,6 +12,8 @@ Define your breakpoints once, get the **current viewport** reactively in every c
 
 - **Reactive everywhere** — the current viewport is a shared `ref`; templates, `computed`, and `watch` all update automatically.
 - **Two APIs** — a Vue plugin (`$currentViewport` on every component) and a `useViewport()` composable.
+- **Flexible breakpoints** — a `rule` can be a `min-width` length, a `{ min, max, orientation }` range, or a raw media-query string.
+- **`useMediaQuery()`** — a standalone, SSR-safe reactive wrapper around any `matchMedia` query, for one-off responsive logic outside the named breakpoints.
 - **Typed** — ships first-class TypeScript types and a single bundled `.d.ts`.
 - **Tiny & zero-dependency** — < 1 kB gzipped, `vue` is the only (peer) dependency.
 - **ESM + CJS** — works with Vite and bundlers.
@@ -91,15 +93,49 @@ import { setupViewports } from 'vue-viewports'
 setupViewports([{ rule: '600px', label: 'small' }, { rule: '1200px', label: 'large' }])
 ```
 
+### Breakpoint rule forms
+
+A `rule` accepts any of three forms:
+
+```ts
+setupViewports([
+  { rule: '768px', label: 'tablet' }, // legacy: min-width length (unchanged)
+  { rule: { min: 768, max: 1279 }, label: 'tablet-only' }, // range: min/max (px) and/or orientation
+  { rule: { orientation: 'landscape' }, label: 'landscape' },
+  { rule: '(prefers-color-scheme: dark)', label: 'dark-mode' }, // raw media query, used verbatim
+])
+```
+
+All three compile to a plain media-query string internally and are matched the same way. When several rules match at once, the one with the largest numeric width (from the legacy form or a range's `min`) wins — exactly as before for all-numeric configs; a rule with no numeric width (raw query, or a range with only `max`/`orientation`) is only picked when it's the sole match.
+
+### `useMediaQuery`
+
+Reactive access to any raw `matchMedia` query, independent of the named-breakpoint system above:
+
+```vue
+<script setup lang="ts">
+import { useMediaQuery } from 'vue-viewports'
+
+const isDark = useMediaQuery('(prefers-color-scheme: dark)')
+</script>
+
+<template>
+  <p>{{ isDark ? 'dark' : 'light' }} mode</p>
+</template>
+```
+
+`query` may also be a `Ref<string>`; changing its value unsubscribes from the old query and subscribes to the new one. `useMediaQuery` is SSR-safe (`false` on the server) and, when called inside a component `setup()` or an `effectScope()`, removes its `matchMedia` listener automatically on scope disposal. Called outside any scope, it still works, but nothing disposes the listener for you.
+
 ## API
 
 | Export | Description |
 | --- | --- |
 | `default` / `VueViewports` | Vue 3 plugin. `app.use(VueViewports, viewports?)`. |
 | `useViewport()` | Composable returning `Readonly<Ref<ViewportMatch \| undefined>>`. |
+| `useMediaQuery(query)` | Composable returning `Readonly<Ref<boolean>>` for any raw `matchMedia` query; `query` may be a `string` or `Ref<string>`. |
 | `setupViewports(viewports?)` | Imperatively (re)configure breakpoints; returns a teardown function. Idempotent. |
 | `defaultViewports` | The built-in breakpoints. |
-| `toMediaQuery(rule)` | `'768px'` → `'(min-width: 768px)'`. |
+| `toMediaQuery(rule)` | Compiles a `ViewportRule` to a media-query string, e.g. `'768px'` → `'(min-width: 768px)'`. |
 | `computeMatch(viewports)` | Pure-ish helper: the largest currently matching viewport. |
 | `viewportInjectionKey` | `InjectionKey` for the readonly ref provided by the plugin. |
 | `$currentViewport` | Component property added by the plugin: `ViewportMatch \| undefined`. |
@@ -107,15 +143,27 @@ setupViewports([{ rule: '600px', label: 'small' }, { rule: '1200px', label: 'lar
 ### Types
 
 ```ts
+type ViewportOrientation = 'portrait' | 'landscape'
+
+interface ViewportRangeRule {
+  readonly min?: number // px
+  readonly max?: number // px
+  readonly orientation?: ViewportOrientation
+}
+
+// legacy min-width length ('768px'), a raw media-query string (contains '('),
+// or a range object
+type ViewportRule = string | ViewportRangeRule
+
 interface ViewportConfig {
-  readonly rule: string // CSS length used as `min-width`, e.g. '768px'
+  readonly rule: ViewportRule
   readonly label: string // your name for the viewport, e.g. 'tablet'
 }
 type ViewportMatch = ViewportConfig
 type ViewportConfigList = readonly ViewportConfig[]
 ```
 
-`rule` is the width at which the viewport **starts** (inclusive); the matching viewport is the largest one whose `min-width` is satisfied.
+For the legacy string form, `rule` is the width at which the viewport **starts** (inclusive); the matching viewport is the largest one whose `min-width` (or range `min`) is satisfied — see [Breakpoint rule forms](#breakpoint-rule-forms) for how ties resolve across mixed forms.
 
 ### Default breakpoints
 

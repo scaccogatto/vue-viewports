@@ -1,5 +1,5 @@
 import { ref, readonly, type DeepReadonly, type Ref } from 'vue'
-import type { ViewportConfig, ViewportConfigList, ViewportMatch } from './types'
+import type { ViewportConfig, ViewportConfigList, ViewportMatch, ViewportRangeRule, ViewportRule } from './types'
 
 /**
  * Sensible default breakpoints, ordered from smallest to largest.
@@ -20,18 +20,49 @@ const currentViewport = ref<ViewportMatch | undefined>(undefined)
 let teardown: (() => void) | undefined
 let initialized = false
 
-/** `'768px'` -> `'(min-width: 768px)'`. */
-export const toMediaQuery = (rule: string): string => `(min-width: ${rule})`
+/** A string rule containing `(` is a raw media query, used verbatim. */
+const isRawQuery = (rule: string): boolean => rule.includes('(')
 
 const toPx = (rule: string): number => Number.parseFloat(rule)
 
+const compileRangeRule = (rule: ViewportRangeRule): string => {
+  const parts: string[] = []
+  if (rule.min !== undefined) parts.push(`(min-width: ${rule.min}px)`)
+  if (rule.max !== undefined) parts.push(`(max-width: ${rule.max}px)`)
+  if (rule.orientation) parts.push(`(orientation: ${rule.orientation})`)
+  return parts.length > 0 ? parts.join(' and ') : 'all'
+}
+
 /**
- * The largest viewport whose `min-width` currently matches, or `undefined`
+ * Compiles a {@link ViewportRule} to a media query string:
+ * - a legacy CSS length (no parentheses), e.g. `'768px'` -> `'(min-width: 768px)'`;
+ * - a string containing `(` -> used verbatim, it is already a media query;
+ * - a {@link ViewportRangeRule} object -> `min-width`/`max-width`/`orientation`, ANDed.
+ */
+export const toMediaQuery = (rule: ViewportRule): string => {
+  if (typeof rule === 'string') return isRawQuery(rule) ? rule : `(min-width: ${rule})`
+  return compileRangeRule(rule)
+}
+
+/**
+ * Sort key used only to break ties among matching viewports: the legacy
+ * numeric form and a range rule's `min` are treated as widths (larger wins,
+ * identical to pre-v4.1 behavior for the legacy form). Rules with no numeric
+ * width (raw query, or a range with no `min`) sort lowest, so they are picked
+ * only when no width-based rule also matches.
+ */
+const sortKey = (rule: ViewportRule): number => {
+  if (typeof rule === 'string') return isRawQuery(rule) ? Number.NEGATIVE_INFINITY : toPx(rule)
+  return rule.min ?? Number.NEGATIVE_INFINITY
+}
+
+/**
+ * The largest viewport whose rule currently matches, or `undefined`
  * when none match. Pure with respect to its input: reads only `matchMedia`.
  */
 export const computeMatch = (viewports: ViewportConfigList): ViewportMatch | undefined => {
   const match = [...viewports]
-    .sort((a, b) => toPx(a.rule) - toPx(b.rule))
+    .sort((a, b) => sortKey(a.rule) - sortKey(b.rule))
     .filter((viewport) => window.matchMedia(toMediaQuery(viewport.rule)).matches)
     .at(-1)
   return match ? { rule: match.rule, label: match.label } : undefined

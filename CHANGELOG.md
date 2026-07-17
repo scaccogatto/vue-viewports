@@ -5,10 +5,15 @@ All notable changes to this project are documented here. This project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- **`useMediaQuery(query)` composable** — a standalone reactive `matchMedia` wrapper, `Readonly<Ref<boolean>>`, independent of the named breakpoints. SSR-safe (`false` on the server), accepts a `string` or `Ref<string>` (a reactive query re-subscribes when it changes), and removes its listener automatically when the current effect scope is disposed.
+- **Extended breakpoint `rule` forms**: a named breakpoint's `rule` can now be, in addition to the existing `min-width` length string, a `{ min?, max?, orientation? }` range object, or a raw media-query string (any string containing `(`). All three compile internally to a media-query string and are matched the same way; resolution for all-numeric configs is unchanged (byte-identical tie-breaking).
+
 ### Changed
 
 - `prepublishOnly` now runs `typecheck && test && build` instead of just `build`, so a broken type or a failing test blocks `npm publish` before it ever reaches the registry.
-- CI now runs the full lint/typecheck/test/build matrix on Node 20, 22, and 24 (previously Node 24 only).
+- CI now runs the full lint/typecheck/test/build matrix on Node 24 only (single-version, latest LTS), dropping the earlier 20/22/24 matrix.
 - Release workflow publishes with `npm publish --provenance` and skips the publish step when `name@version` is already on npm, so re-running the workflow for an already-published tag is a no-op instead of an error.
 
 ### Corrected
