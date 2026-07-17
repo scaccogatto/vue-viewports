@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- `prepublishOnly` now runs `typecheck && test && build` instead of just `build`, so a broken type or a failing test blocks `npm publish` before it ever reaches the registry.
+- CI now runs the full lint/typecheck/test/build matrix on Node 20, 22, and 24 (previously Node 24 only).
+- Release workflow publishes with `npm publish --provenance` and skips the publish step when `name@version` is already on npm, so re-running the workflow for an already-published tag is a no-op instead of an error.
+
+### Corrected
+
+- The `unpkg`/`jsdelivr` entries and UMD build mentioned in the 4.0.0 notes below were never shipped; the package is ESM/CJS only via the `exports` map.
+
 ## [4.0.0] - 2026-06-28
 
 Full **Vue 3 + TypeScript** rewrite with modern, best-in-class tooling.

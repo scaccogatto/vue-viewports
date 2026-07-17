@@ -13,7 +13,7 @@ export default defineConfig({
       fileName: (format) =>
         format === 'es' ? 'vue-viewports.js' : 'vue-viewports.cjs',
     },
-    rollupOptions: {
+    rolldownOptions: {
       external: ['vue'],
       output: { exports: 'named' },
     },
