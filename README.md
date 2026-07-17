@@ -3,6 +3,7 @@
 > Named, reactive, `matchMedia`-based viewport breakpoints for Vue 3 — a tiny plugin **and** composable.
 
 [![npm version](https://img.shields.io/npm/v/vue-viewports.svg)](https://www.npmjs.com/package/vue-viewports)
+[![npm downloads](https://img.shields.io/npm/dm/vue-viewports)](https://www.npmjs.com/package/vue-viewports)
 [![CI](https://github.com/scaccogatto/vue-viewports/actions/workflows/ci.yml/badge.svg)](https://github.com/scaccogatto/vue-viewports/actions/workflows/ci.yml)
 [![minzipped size](https://img.shields.io/bundlephobia/minzip/vue-viewports)](https://bundlephobia.com/package/vue-viewports)
 [![license](https://img.shields.io/npm/l/vue-viewports.svg)](./LICENSE)
