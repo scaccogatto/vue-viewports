@@ -8,6 +8,8 @@
 [![minzipped size](https://img.shields.io/bundlephobia/minzip/vue-viewports)](https://bundlephobia.com/package/vue-viewports)
 [![license](https://img.shields.io/npm/l/vue-viewports.svg)](./LICENSE)
 
+[Live demo](https://scaccogatto.github.io/vue-viewports/) — resize the window and watch the named breakpoint change.
+
 Define your breakpoints once, get the **current viewport** reactively in every component. No resize listeners, no debouncing — it is backed by the browser's [`matchMedia`](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) and updates only when a breakpoint is actually crossed.
 
 - **Reactive everywhere** — the current viewport is a shared `ref`; templates, `computed`, and `watch` all update automatically.
