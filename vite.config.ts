@@ -3,7 +3,15 @@ import dts from 'vite-plugin-dts'
 
 export default defineConfig({
   plugins: [
-    dts({ include: ['src'], bundleTypes: true, tsconfigPath: './tsconfig.json' }),
+    dts({
+      include: ['src'],
+      bundleTypes: true,
+      tsconfigPath: './tsconfig.json',
+      // The library is pure TS. Without this, unplugin-dts finds demo/App.vue
+      // while scanning the project root, switches to the Vue processor and
+      // fails on the missing @vue/language-core.
+      processor: 'ts',
+    }),
   ],
   build: {
     lib: {
