@@ -15,7 +15,7 @@ Define your breakpoints once, get the **current viewport** reactively in every c
 - **Reactive everywhere** — the current viewport is a shared `ref`; templates, `computed`, and `watch` all update automatically.
 - **Two APIs** — a Vue plugin (`$currentViewport` on every component) and a `useViewport()` composable.
 - **Flexible breakpoints** — a `rule` can be a `min-width` length, a `{ min, max, orientation }` range, or a raw media-query string.
-- **`useMediaQuery()`** — a standalone, SSR-safe reactive wrapper around any `matchMedia` query, for one-off responsive logic outside the named breakpoints.
+- **`useMediaQuery()`** — a standalone reactive wrapper (safe to call during SSR) around any `matchMedia` query, for one-off responsive logic outside the named breakpoints.
 - **Typed** — ships first-class TypeScript types and a single bundled `.d.ts`.
 - **Tiny & zero-dependency** — < 1 kB gzipped, `vue` is the only (peer) dependency.
 - **ESM + CJS** — works with Vite and bundlers.
@@ -126,7 +126,29 @@ const isDark = useMediaQuery('(prefers-color-scheme: dark)')
 </template>
 ```
 
-`query` may also be a `Ref<string>`; changing its value unsubscribes from the old query and subscribes to the new one. `useMediaQuery` is SSR-safe (`false` on the server) and, when called inside a component `setup()` or an `effectScope()`, removes its `matchMedia` listener automatically on scope disposal. Called outside any scope, it still works, but nothing disposes the listener for you.
+`query` may also be a `Ref<string>`; changing its value unsubscribes from the old query and subscribes to the new one. `useMediaQuery` is `false` on the server (see [SSR and hydration](#ssr-and-hydration)) and, when called inside a component `setup()` or an `effectScope()`, removes its `matchMedia` listener automatically on scope disposal. Called outside any scope, it still works, but nothing disposes the listener for you.
+
+### SSR and hydration
+
+The plugin, `useViewport()` and `useMediaQuery()` can all run on the server: without `window.matchMedia` they set up no listeners, `$currentViewport` and `useViewport()` read `undefined`, and `useMediaQuery()` reads `false`.
+
+On the client they evaluate `matchMedia` synchronously during `setup()`, so the first client render can differ from the server HTML. A template that branches on them (like the `DesktopNav` / `MobileNav` example above) then triggers a Vue hydration mismatch warning and a DOM patch. To avoid it, render viewport-dependent markup only after mount, for example with Nuxt's `<ClientOnly>` or a mounted flag:
+
+```vue
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { useViewport } from 'vue-viewports'
+
+const viewport = useViewport()
+const mounted = ref(false)
+onMounted(() => (mounted.value = true))
+</script>
+
+<template>
+  <DesktopNav v-if="mounted && viewport?.label === 'desktop'" />
+  <MobileNav v-else />
+</template>
+```
 
 ## API
 
