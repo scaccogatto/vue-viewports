@@ -20,6 +20,10 @@ const currentViewport = ref<ViewportMatch | undefined>(undefined)
 let teardown: (() => void) | undefined
 let initialized = false
 
+/** `true` when `window.matchMedia` exists, i.e. not during SSR. */
+const hasMatchMedia = (): boolean =>
+  typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+
 /** A string rule containing `(` is a raw media query, used verbatim. */
 const isRawQuery = (rule: string): boolean => rule.includes('(')
 
@@ -56,37 +60,51 @@ const sortKey = (rule: ViewportRule): number => {
   return rule.min ?? Number.NEGATIVE_INFINITY
 }
 
+/** Viewports ordered by {@link sortKey}, ascending: the last match wins. */
+const sortViewports = (viewports: ViewportConfigList): ViewportConfigList =>
+  [...viewports].sort((a, b) => sortKey(a.rule) - sortKey(b.rule))
+
+const toMatch = (viewport: ViewportConfig | undefined): ViewportMatch | undefined =>
+  viewport ? { rule: viewport.rule, label: viewport.label } : undefined
+
 /**
  * The largest viewport whose rule currently matches, or `undefined`
  * when none match. Pure with respect to its input: reads only `matchMedia`.
  */
-export const computeMatch = (viewports: ViewportConfigList): ViewportMatch | undefined => {
-  const match = [...viewports]
-    .sort((a, b) => sortKey(a.rule) - sortKey(b.rule))
-    .filter((viewport) => window.matchMedia(toMediaQuery(viewport.rule)).matches)
-    .at(-1)
-  return match ? { rule: match.rule, label: match.label } : undefined
-}
+export const computeMatch = (viewports: ViewportConfigList): ViewportMatch | undefined =>
+  toMatch(
+    sortViewports(viewports)
+      .filter((viewport) => window.matchMedia(toMediaQuery(viewport.rule)).matches)
+      .at(-1),
+  )
 
 /**
  * Register `matchMedia` listeners for every viewport and keep
  * {@link currentViewport} in sync. Idempotent: tears down any previous setup
  * first. Returns a teardown function that removes the listeners.
+ *
+ * SSR-safe: when `matchMedia` is unavailable (no `window`), it only tears down
+ * any previous setup, registers nothing and returns a no-op teardown.
  */
 export const setupViewports = (viewports: ViewportConfigList = defaultViewports): (() => void) => {
   teardown?.()
+  if (!hasMatchMedia()) return () => undefined
 
-  const queries = viewports.map((viewport) => window.matchMedia(toMediaQuery(viewport.rule)))
+  // One MediaQueryList per viewport, built once and sorted once: updates only
+  // read `.matches` instead of re-creating and re-sorting on every change.
+  const entries = sortViewports(viewports).map(
+    (viewport) => [viewport, window.matchMedia(toMediaQuery(viewport.rule))] as const,
+  )
   const update = (): void => {
-    currentViewport.value = computeMatch(viewports)
+    currentViewport.value = toMatch(entries.filter(([, mql]) => mql.matches).at(-1)?.[0])
   }
 
-  queries.forEach((query) => query.addEventListener('change', update))
+  entries.forEach(([, mql]) => mql.addEventListener('change', update))
   update()
 
   initialized = true
   const dispose = (): void => {
-    queries.forEach((query) => query.removeEventListener('change', update))
+    entries.forEach(([, mql]) => mql.removeEventListener('change', update))
     if (teardown === dispose) teardown = undefined
   }
   teardown = dispose
@@ -99,15 +117,17 @@ export const setupViewports = (viewports: ViewportConfigList = defaultViewports)
  * environment exposes `matchMedia` (skipped during SSR).
  */
 export const ensureViewports = (): void => {
-  if (initialized) return
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+  if (initialized || !hasMatchMedia()) return
   setupViewports(defaultViewports)
 }
 
 /** Readonly handle to the shared reactive state, for composables. */
 export const viewportRef = (): DeepReadonly<Ref<ViewportMatch | undefined>> => readonly(currentViewport)
 
-/** Current value without subscribing reactively — used by the plugin getter. */
+/**
+ * Current value, read from the shared ref: reactive when read inside a render
+ * or effect (the plugin's `$currentViewport` getter relies on this).
+ */
 export const currentViewportValue = (): ViewportMatch | undefined => currentViewport.value
 
 /** Reset all state. Intended for tests. */

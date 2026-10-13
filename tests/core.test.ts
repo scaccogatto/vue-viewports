@@ -186,6 +186,24 @@ describe('setupViewports', () => {
     expect(current.value?.label).toBe('tablet')
   })
 
+  it('creates each MediaQueryList once, not again on every change event', () => {
+    const matchMedia = vi.spyOn(window, 'matchMedia')
+    setupViewports(defaultViewports)
+    expect(matchMedia).toHaveBeenCalledTimes(defaultViewports.length)
+
+    media.setWidth(800)
+    media.setWidth(2000)
+    expect(viewportRef().value?.label).toBe('hd-desktop')
+    expect(matchMedia).toHaveBeenCalledTimes(defaultViewports.length)
+  })
+
+  it('is a no-op returning a callable teardown when window is undefined (SSR)', () => {
+    vi.stubGlobal('window', undefined)
+    const teardown = setupViewports(defaultViewports)
+    expect(viewportRef().value).toBeUndefined()
+    expect(() => teardown()).not.toThrow()
+  })
+
   it('defaults to the built-in viewports', () => {
     setupViewports()
     const current = viewportRef()

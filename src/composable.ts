@@ -23,6 +23,11 @@ import type { ViewportMatch } from './types'
  * configured there. Otherwise it lazily initializes the default breakpoints on
  * first call (no-op during SSR). The value is `undefined` until the first match
  * is computed and whenever no viewport matches.
+ *
+ * Hydration: on the client the value is computed synchronously during
+ * `setup()`, so it can differ from the server render (where it is
+ * `undefined`). Gate viewport-dependent markup behind a mounted flag or
+ * `<ClientOnly>` to avoid a hydration mismatch.
  */
 export const useViewport = (): DeepReadonly<Ref<ViewportMatch | undefined>> => {
   ensureViewports()
@@ -32,8 +37,11 @@ export const useViewport = (): DeepReadonly<Ref<ViewportMatch | undefined>> => {
 /**
  * Reactive `window.matchMedia` wrapper: `true` while `query` currently matches.
  *
- * SSR-safe — `false` on the server (no `matchMedia`), evaluated live on the
- * client. `query` may be a plain string or a `Ref<string>`; changing the
+ * Safe to call during SSR: `false` on the server (no `matchMedia`), evaluated
+ * live on the client. The client value is computed synchronously during
+ * `setup()`, so it can differ from the server render and cause a hydration
+ * mismatch: gate dependent markup behind a mounted flag or `<ClientOnly>`.
+ * `query` may be a plain string or a `Ref<string>`; changing the
  * ref's value unsubscribes from the old query and subscribes to the new one.
  *
  * The underlying `matchMedia` listener is removed automatically when the

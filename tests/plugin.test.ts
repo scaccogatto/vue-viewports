@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, inject, nextTick } from 'vue'
+import { createSSRApp, defineComponent, h, inject, nextTick } from 'vue'
+import { renderToString } from 'vue/server-renderer'
 import { mount } from '@vue/test-utils'
 import { VueViewports, viewportInjectionKey } from '../src/plugin'
 import { resetViewports } from '../src/core'
@@ -79,5 +80,22 @@ describe('VueViewports plugin', () => {
     await nextTick()
     expect(wrapper.text()).toBe('small') // plugin's custom config wins
     expect(viewport.value?.label).toBe('small') // shared singleton reflects it
+  })
+
+  it('installs during SSR (no window) and renders $currentViewport as undefined', async () => {
+    vi.stubGlobal('window', undefined)
+    let injected: { value: ViewportMatch | undefined } | undefined
+    const App = defineComponent({
+      setup() {
+        injected = inject(viewportInjectionKey)
+        return {}
+      },
+      template: '<span>{{ $currentViewport ? $currentViewport.label : "none" }}</span>',
+    })
+    const app = createSSRApp(App)
+
+    expect(() => app.use(VueViewports)).not.toThrow()
+    expect(await renderToString(app)).toBe('<span>none</span>')
+    expect(injected?.value).toBeUndefined()
   })
 })
