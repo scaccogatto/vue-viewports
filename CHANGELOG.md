@@ -1,7 +1,22 @@
 # Changelog
 
-All notable changes to this project are documented here. This project adheres to
+All notable changes to this project are documented here. The format is based on
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Changed
+
+- `engines.node` is now `>=24` (was `>=20`, which reached end of life in 2026-04). Node 24 is the only version tested in CI. The library itself runs in the browser, so this only affects tooling that enforces `engines`.
+- `setupViewports` builds and sorts its `MediaQueryList` objects once per setup instead of on every `change` event.
+- The `exports` map now nests `types` under the `import` and `require` conditions.
+- README and JSDoc describe the hydration mismatch that `useViewport()`, `useMediaQuery()` and `$currentViewport` can cause in SSR apps, and how to avoid it with a mounted flag or `<ClientOnly>`.
+
+### Fixed
+
+- `app.use(VueViewports)` and `setupViewports()` no longer throw `window is not defined` during SSR. Without `matchMedia` they register nothing, `$currentViewport` renders `undefined` and the injected ref stays `undefined`.
+- CommonJS TypeScript consumers (`moduleResolution` `node16`/`nodenext`) now get CJS-flavored types from a new `dist/index.d.cts` instead of ESM types for the `.cjs` entry ("masquerading as ESM").
 
 ## [4.1.0] — 2026-07-17
 
@@ -58,3 +73,5 @@ Full **Vue 3 + TypeScript** rewrite with modern, best-in-class tooling.
 ## [3.1.2] - earlier
 
 Last Vue 2 release. See git history.
+
+[Unreleased]: https://github.com/scaccogatto/vue-viewports/compare/v4.1.0...HEAD
