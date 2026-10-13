@@ -30,11 +30,12 @@ jobs:
 
       - name: Check npm supports trusted publishing
         run: |
-          node -e '
-            const [major, minor, patch] = process.argv[1].split(".").map(Number)
-            const ok = major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)))
-            if (!ok) { console.error(`npm ${process.argv[1]} < 11.5.1`); process.exit(1) }
-          ' "$(npm --version)"
+          MIN=11.5.1
+          NPM_VERSION=$(npm --version)
+          if [ "$(printf '%s\n' "$MIN" "$NPM_VERSION" | sort -V | head -n1)" != "$MIN" ]; then
+            echo "::error::npm $NPM_VERSION is older than $MIN, required by trusted publishing"
+            exit 1
+          fi
 
       - name: Check tag matches package.json version
         run: |
