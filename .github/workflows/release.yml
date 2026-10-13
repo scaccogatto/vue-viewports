@@ -1,24 +1,66 @@
 name: Release
+
 on:
   push:
     tags: ['v*']
-  workflow_dispatch:
+
+permissions: {}
+
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Tag-only deployment policy (v*) is enforced on this environment.
+    environment: npm
     permissions:
       contents: read
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Exact Node version on purpose: its bundled npm (11.19.0) satisfies
+      # trusted publishing (npm >= 11.5.1), so no global npm install is needed.
+      # Dependabot does not bump this value, update it by hand.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24
+          node-version: 24.21.0
           cache: npm
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Check npm supports trusted publishing
+        run: |
+          node -e '
+            const [major, minor, patch] = process.argv[1].split(".").map(Number)
+            const ok = major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)))
+            if (!ok) { console.error(`npm ${process.argv[1]} < 11.5.1`); process.exit(1) }
+          ' "$(npm --version)"
+
+      - name: Check tag matches package.json version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "v$VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version v$VERSION"
+            exit 1
+          fi
+
       - run: npm ci
-      - run: npm run build
-      - run: npm install -g npm@latest
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Lint package
+        run: npm run lint:package
+
       - name: Check if version is already published
         id: check
         run: |
@@ -29,6 +71,8 @@ jobs:
           else
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi
+
+      # The steps above already ran everything prepublishOnly would run.
       - name: Publish
         if: steps.check.outputs.published == 'false'
-        run: npm publish --provenance
+        run: npm publish --provenance --ignore-scripts
