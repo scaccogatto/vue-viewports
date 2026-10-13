@@ -11,6 +11,12 @@ export default defineConfig({
       // while scanning the project root, switches to the Vue processor and
       // fails on the missing @vue/language-core.
       processor: 'ts',
+      // Emit index.d.ts for the ESM entry and index.d.cts for the CJS entry,
+      // so CommonJS consumers under node16/nodenext get CJS-flavored types.
+      outDirs: [
+        'dist',
+        { dir: 'dist', moduleFormat: 'cjs' },
+      ],
     }),
   ],
   build: {
