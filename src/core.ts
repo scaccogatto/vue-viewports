@@ -84,8 +84,7 @@ export const computeMatch = (viewports: ViewportConfigList): ViewportMatch | und
  * first. Returns a teardown function that removes the listeners.
  *
  * SSR-safe: when `matchMedia` is unavailable (no `window`), it only tears down
- * any previous setup, leaves the current viewport `undefined` and returns a
- * no-op teardown.
+ * any previous setup, registers nothing and returns a no-op teardown.
  */
 export const setupViewports = (viewports: ViewportConfigList = defaultViewports): (() => void) => {
   teardown?.()

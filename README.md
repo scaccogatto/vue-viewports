@@ -16,7 +16,7 @@ Define your breakpoints once, get the **current viewport** reactively in every c
 - **Two APIs** — a Vue plugin (`$currentViewport` on every component) and a `useViewport()` composable.
 - **Flexible breakpoints** — a `rule` can be a `min-width` length, a `{ min, max, orientation }` range, or a raw media-query string.
 - **`useMediaQuery()`** — a standalone reactive wrapper (safe to call during SSR) around any `matchMedia` query, for one-off responsive logic outside the named breakpoints.
-- **Typed** — ships first-class TypeScript types and a single bundled `.d.ts`.
+- **Typed** — ships first-class TypeScript types, bundled as `.d.ts` (ESM) and `.d.cts` (CommonJS).
 - **Tiny & zero-dependency** — < 1 kB gzipped, `vue` is the only (peer) dependency.
 - **ESM + CJS** — works with Vite and bundlers.
 
